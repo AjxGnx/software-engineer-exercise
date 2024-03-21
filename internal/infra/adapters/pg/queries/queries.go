@@ -11,3 +11,12 @@ const GetByNumber = `
 		FROM categorization
 		WHERE number = $1
 	`
+
+const GetWithLimitAndOffset = `
+		SELECT id, number, category
+		FROM categorization
+		ORDER BY id
+		LIMIT $1 OFFSET $2
+	`
+
+const GetCount = `SELECT COUNT(*) FROM categorization`

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"math"
 
 	"github.com/AjxGnx/software-engineer-exercise/internal/domain/entity"
 	"github.com/AjxGnx/software-engineer-exercise/internal/infra/adapters/pg/queries"
@@ -11,7 +12,7 @@ import (
 type NumberCategorization interface {
 	Insert(categorization entity.Categorization) (entity.Categorization, error)
 	GetByNumber(number int64) (entity.Categorization, error)
-	Get() error
+	Get(page int, limit int) (*entity.Paginator, error)
 }
 
 type numberCategorizationRepo struct {
@@ -51,7 +52,63 @@ func (repo numberCategorizationRepo) GetByNumber(number int64) (entity.Categoriz
 	return categorization, nil
 }
 
-func (repo numberCategorizationRepo) Get() error {
-	log.Info("APP- GET")
-	return nil
+func (repo numberCategorizationRepo) Get(page int, limit int) (*entity.Paginator, error) {
+	var categorizations []entity.Categorization
+
+	offset := (page - 1) * limit
+
+	rows, err := repo.db.Query(queries.GetWithLimitAndOffset, limit, offset)
+	if err != nil {
+		log.Printf("error fetching categorizations for page %d: %s", page, err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var categorization entity.Categorization
+		if err := rows.Scan(&categorization.ID, &categorization.Number, &categorization.Category); err != nil {
+			log.Printf("error scanning categorization row: %s", err)
+			return nil, err
+		}
+		categorizations = append(categorizations, categorization)
+	}
+
+	totalRecords, err := repo.countTotalRecords()
+	if err != nil {
+		log.Printf("error getting total count of categorizations: %s", err)
+		return nil, err
+	}
+
+	paginator := &entity.Paginator{
+		TotalRecord: totalRecords,
+		TotalPage:   int(math.Ceil(float64(totalRecords) / float64(limit))),
+		Records:     categorizations,
+		Offset:      offset,
+		Limit:       limit,
+		Page:        page,
+	}
+
+	if page > 1 {
+		paginator.PrevPage = page - 1
+	} else {
+		paginator.PrevPage = page
+	}
+
+	if page == paginator.TotalPage {
+		paginator.NextPage = page
+	} else {
+		paginator.NextPage = page + 1
+	}
+
+	return paginator, nil
+}
+
+func (repo numberCategorizationRepo) countTotalRecords() (int, error) {
+	var total int
+
+	if err := repo.db.QueryRow(queries.GetCount).Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -62,6 +63,21 @@ func (handler numberCategorizationHandler) GetByNumber(context echo.Context) err
 }
 
 func (handler numberCategorizationHandler) Get(context echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	page, _ := strconv.Atoi(context.QueryParam("page"))
+	limit, _ := strconv.Atoi(context.QueryParam("limit"))
+	paginate := dto.Paginate{
+		Page:  page,
+		Limit: limit,
+	}
+
+	categorizations, err := handler.numberCategorizationApp.Get(paginate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, dto.Message{
+		Message: fmt.Sprintf("categorizations successfully loaded"),
+		Data:    categorizations,
+	})
+
 }

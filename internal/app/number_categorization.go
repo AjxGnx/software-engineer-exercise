@@ -3,15 +3,15 @@ package app
 import (
 	"fmt"
 
+	"github.com/AjxGnx/software-engineer-exercise/internal/domain/dto"
 	"github.com/AjxGnx/software-engineer-exercise/internal/domain/entity"
 	"github.com/AjxGnx/software-engineer-exercise/internal/infra/adapters/pg/repository"
-	"github.com/labstack/gommon/log"
 )
 
 type NumberCategorization interface {
 	Categorize(number int64) (entity.Categorization, error)
 	GetByNumber(number int64) (entity.Categorization, error)
-	Get() error
+	Get(paginate dto.Paginate) (*entity.Paginator, error)
 }
 
 type numberCategorizationApp struct {
@@ -49,7 +49,6 @@ func (app numberCategorizationApp) GetByNumber(number int64) (entity.Categorizat
 	return app.repo.GetByNumber(number)
 }
 
-func (app numberCategorizationApp) Get() error {
-	log.Info("APP- GET")
-	return nil
+func (app numberCategorizationApp) Get(paginate dto.Paginate) (*entity.Paginator, error) {
+	return app.repo.Get(paginate.Page, paginate.Limit)
 }
