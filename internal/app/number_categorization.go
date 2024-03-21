@@ -10,7 +10,7 @@ import (
 
 type NumberCategorization interface {
 	Categorize(number int64) (entity.Categorization, error)
-	GetByNumber(number int) error
+	GetByNumber(number int64) (entity.Categorization, error)
 	Get() error
 }
 
@@ -45,9 +45,8 @@ func (app numberCategorizationApp) Categorize(number int64) (entity.Categorizati
 	return categorization, nil
 }
 
-func (app numberCategorizationApp) GetByNumber(number int) error {
-	log.Info("APP - GetByNumber - ", number)
-	return nil
+func (app numberCategorizationApp) GetByNumber(number int64) (entity.Categorization, error) {
+	return app.repo.GetByNumber(number)
 }
 
 func (app numberCategorizationApp) Get() error {

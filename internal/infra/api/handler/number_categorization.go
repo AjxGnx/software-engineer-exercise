@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/AjxGnx/software-engineer-exercise/internal/app"
 	"github.com/AjxGnx/software-engineer-exercise/internal/domain/dto"
@@ -47,8 +48,17 @@ func (handler numberCategorizationHandler) Categorize(context echo.Context) erro
 }
 
 func (handler numberCategorizationHandler) GetByNumber(context echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	number, _ := strconv.Atoi(context.Param("number"))
+
+	categorization, err := handler.numberCategorizationApp.GetByNumber(int64(number))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, dto.Message{
+		Message: "categorization number successfully loaded",
+		Data:    categorization,
+	})
 }
 
 func (handler numberCategorizationHandler) Get(context echo.Context) error {

@@ -10,7 +10,7 @@ import (
 
 type NumberCategorization interface {
 	Insert(categorization entity.Categorization) (entity.Categorization, error)
-	GetByNumber(number int) error
+	GetByNumber(number int64) (entity.Categorization, error)
 	Get() error
 }
 
@@ -37,9 +37,18 @@ func (repo numberCategorizationRepo) Insert(categorization entity.Categorization
 	return rowInserted, nil
 }
 
-func (repo numberCategorizationRepo) GetByNumber(number int) error {
-	log.Info("APP - GetByNumber - ", number)
-	return nil
+func (repo numberCategorizationRepo) GetByNumber(number int64) (entity.Categorization, error) {
+	var categorization entity.Categorization
+
+	err := repo.db.QueryRow(queries.GetByNumber, number).
+		Scan(&categorization.ID, &categorization.Number, &categorization.Category)
+
+	if err != nil {
+		log.Printf("error fetching categorization by number: %s", err)
+		return categorization, err
+	}
+
+	return categorization, nil
 }
 
 func (repo numberCategorizationRepo) Get() error {
