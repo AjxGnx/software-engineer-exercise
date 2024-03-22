@@ -1,5 +1,44 @@
 basePath: /api/exercise
 definitions:
+  dto.MessageError:
+    properties:
+      message:
+        type: string
+    type: object
+  dto.Number:
+    properties:
+      value:
+        type: integer
+    required:
+    - value
+    type: object
+  entity.Categorization:
+    properties:
+      category:
+        type: string
+      id:
+        type: integer
+      number:
+        type: integer
+    type: object
+  entity.Paginator:
+    properties:
+      limit:
+        type: integer
+      next_page:
+        type: integer
+      offset:
+        type: integer
+      page:
+        type: integer
+      prev_page:
+        type: integer
+      records: {}
+      total_page:
+        type: integer
+      total_record:
+        type: integer
+    type: object
   handler.Health:
     properties:
       message:
@@ -28,6 +67,88 @@ paths:
       summary: Check if service is active
       tags:
       - Health
+  /numbers/:
+    get:
+      consumes:
+      - application/json
+      description: Get Categorization numbers
+      parameters:
+      - description: page to find
+        in: query
+        name: page
+        type: string
+      - description: limit of page
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Paginator'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.MessageError'
+      summary: Get Categorization numbers
+      tags:
+      - Numbers
+    post:
+      consumes:
+      - application/json
+      description: Categorize a number
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Number'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Categorization'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.MessageError'
+      summary: Categorize a number
+      tags:
+      - Numbers
+  /numbers/{number}:
+    get:
+      consumes:
+      - application/json
+      description: Get Categorization by number
+      parameters:
+      - description: value of number to find
+        in: path
+        name: number
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Categorization'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.MessageError'
+      summary: Get Categorization by number
+      tags:
+      - Numbers
 schemes:
 - http
 swagger: "2.0"

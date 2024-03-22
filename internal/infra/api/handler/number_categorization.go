@@ -26,6 +26,16 @@ func NewNumberCategorizationHandler(numberCategorizationApp app.NumberCategoriza
 	}
 }
 
+// @Tags        Numbers
+// @Summary     Categorize a number
+// @Description Categorize a number
+// @Accept      json
+// @Produce     json
+// @Param       request body     dto.Number true "Request Body"
+// @Success     200       {object} entity.Categorization
+// @Failure     400  {object} dto.MessageError
+// @Failure     500  {object} dto.MessageError
+// @Router      /numbers/ [post]
 func (handler numberCategorizationHandler) Categorize(context echo.Context) error {
 	var number dto.Number
 
@@ -48,6 +58,15 @@ func (handler numberCategorizationHandler) Categorize(context echo.Context) erro
 	})
 }
 
+// @Tags        Numbers
+// @Summary     Get Categorization by number
+// @Description Get Categorization by number
+// @Accept      json
+// @Produce     json
+// @Param       number  path  int true "value of number to find"
+// @Success     200       {object} entity.Categorization
+// @Failure     404  {object} dto.MessageError
+// @Router      /numbers/{number} [get]
 func (handler numberCategorizationHandler) GetByNumber(context echo.Context) error {
 	number, _ := strconv.Atoi(context.Param("number"))
 
@@ -62,6 +81,16 @@ func (handler numberCategorizationHandler) GetByNumber(context echo.Context) err
 	})
 }
 
+// @Tags        Numbers
+// @Summary     Get Categorization numbers
+// @Description Get Categorization numbers
+// @Accept      json
+// @Produce     json
+// @Param       page      query    string false "page to find"
+// @Param       limit     query    string false "limit of page"
+// @Success     200       {object} entity.Paginator
+// @Failure     500  {object} dto.MessageError
+// @Router      /numbers/ [get]
 func (handler numberCategorizationHandler) Get(context echo.Context) error {
 	page, _ := strconv.Atoi(context.QueryParam("page"))
 	limit, _ := strconv.Atoi(context.QueryParam("limit"))
