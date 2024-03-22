@@ -1,0 +1,51 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Number Categorization Manager",
+        "title": "Number Categorization Manager",
+        "contact": {},
+        "license": {
+            "name": "Alirio Gutierrez"
+        },
+        "version": "1.0.0"
+    },
+    "basePath": "/api/exercise",
+    "paths": {
+        "/health": {
+            "get": {
+                "description": "health service",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Check if service is active",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Health"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.Health": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

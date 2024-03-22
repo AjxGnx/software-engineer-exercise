@@ -1,0 +1,33 @@
+basePath: /api/exercise
+definitions:
+  handler.Health:
+    properties:
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: Number Categorization Manager
+  license:
+    name: Alirio Gutierrez
+  title: Number Categorization Manager
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      description: health service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Health'
+      summary: Check if service is active
+      tags:
+      - Health
+schemes:
+- http
+swagger: "2.0"

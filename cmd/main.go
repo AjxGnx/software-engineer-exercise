@@ -11,6 +11,12 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// @title        Number Categorization Manager
+// @version      1.0.0
+// @description  Number Categorization Manager
+// @license.name Alirio Gutierrez
+// @BasePath     /api/exercise
+// @schemes      http
 func main() {
 	container := providers.BuildContainer()
 	err := container.Invoke(func(router *router.Router, server *echo.Echo) {
