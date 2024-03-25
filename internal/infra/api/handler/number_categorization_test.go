@@ -116,6 +116,26 @@ func (suite *numberCategorizationHandlerTestSuite) TestGetByNumber_WhenAppFail()
 	setupCase.context.SetParamValues(strconv.Itoa(int(numberToCategorize)))
 
 	suite.ErrorAs(suite.underTest.GetByNumber(setupCase.context), &httpError)
+	suite.Equal(http.StatusInternalServerError, httpError.Code)
+}
+
+func (suite *numberCategorizationHandlerTestSuite) TestGetByNumber_WhenNumberNotFound() {
+	var httpError *echo.HTTPError
+
+	numberToCategorize := int64(5)
+	numberParam := "number"
+
+	NumberNotFoundError := errors.New("sql: no rows in result set")
+
+	suite.NumberCategorizationApp.Mock.On(getByNumberMethod, numberToCategorize).
+		Return(entity.Categorization{}, NumberNotFoundError)
+
+	setupCase := SetupControllerCase(http.MethodGet, "/api/exercise/numbers/", nil)
+	setupCase.Req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	setupCase.context.SetParamNames(numberParam)
+	setupCase.context.SetParamValues(strconv.Itoa(int(numberToCategorize)))
+
+	suite.ErrorAs(suite.underTest.GetByNumber(setupCase.context), &httpError)
 	suite.Equal(http.StatusNotFound, httpError.Code)
 }
 

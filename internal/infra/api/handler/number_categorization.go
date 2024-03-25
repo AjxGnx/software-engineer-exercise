@@ -71,8 +71,14 @@ func (handler numberCategorizationHandler) GetByNumber(context echo.Context) err
 	number, _ := strconv.Atoi(context.Param("number"))
 
 	categorization, err := handler.numberCategorizationApp.GetByNumber(int64(number))
+
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, err.Error())
+		if err.Error() == "sql: no rows in result set" {
+			return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("the number: %v does not exist", number))
+		}
+
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+
 	}
 
 	return context.JSON(http.StatusOK, dto.Message{
